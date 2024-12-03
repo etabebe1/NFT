@@ -2,14 +2,15 @@
 pragma solidity ^0.8.26;
 
 import {Test} from "forge-std/Test.sol";
-import {BasicNFT} from "../src/BasicNFT.sol";
-import {DeployBasicNFT} from "../script/DeployBasicNFT.s.sol";
+import {BasicNFT} from "../../src/BasicNFT.sol";
+import {DeployBasicNFT} from "../../script/DeployBasicNFT.s.sol";
 
 contract BasicNFTTest is Test {
     BasicNFT public basicNFT;
     address USER = makeAddr("user");
 
-    string private randomTokenURI = "ipfs://QmW6aDHtYAprDkqbeC4pXZQz1Gp4iqj1rwp53SMoGkK2dr";
+    string private randomTokenURI =
+        "ipfs://QmW6aDHtYAprDkqbeC4pXZQz1Gp4iqj1rwp53SMoGkK2dr";
 
     function setUp() public {
         DeployBasicNFT deployer = new DeployBasicNFT();
@@ -31,6 +32,9 @@ contract BasicNFTTest is Test {
         vm.prank(USER);
         basicNFT.mintNFT(randomTokenURI);
 
-        assert(keccak256(abi.encodePacked(randomTokenURI)) == keccak256(abi.encodePacked(basicNFT.tokenURI(0))));
+        assert(
+            keccak256(abi.encodePacked(randomTokenURI)) ==
+                keccak256(abi.encodePacked(basicNFT.tokenURI(0)))
+        );
     }
 }

@@ -7,7 +7,7 @@ remappings=[
     "@openzeppelin=lib/openzeppelin-contracts/contracts",
     "forge-std/=lib/forge-std/src/"
 ]
-
-fs_permissions = [{ access = "read", path = "./broadcast" }, {access = "read", path = "./Images/"}]
+ffi=false
+fs_permissions = [{ access = "read", path = "./broadcast" }, {access = "read", path = "./images/"}]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

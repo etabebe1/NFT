@@ -2,9 +2,9 @@
 pragma solidity ^0.8.26;
 
 import {Test, console} from "forge-std/Test.sol";
-import {StatusNFT} from "../src/StatusNFT.sol";
+import {StatusNFT} from "../../src/StatusNFT.sol";
 import {Base64} from "@openzeppelin/utils/Base64.sol";
-import {StatusConstants} from "../script/DeployStatusNFT.s.sol";
+import {StatusConstants} from "../../script/DeployStatusNFT.s.sol";
 
 contract StatusNFTTest is Test, StatusConstants {
     StatusNFT statusNFT;
@@ -40,7 +40,7 @@ contract StatusNFTTest is Test, StatusConstants {
             )
         );
 
-        // // Assert that the tokenURI matches the expected metadata
+        // Assert that the tokenURI matches the expected metadata
         assertEq(
             uri,
             expectedMetadata,
