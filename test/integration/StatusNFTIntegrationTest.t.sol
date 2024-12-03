@@ -44,11 +44,7 @@ contract StatusNFTIntegrationTest is Test, StatusConstants {
         );
 
         // Assert that the tokenURI matches the expected metadata
-        assertEq(
-            uri,
-            expectedMetadata,
-            "Token URI does not match expected metadata."
-        );
+        assertEq(uri, expectedMetadata, "Token URI does not match expected metadata.");
     }
 
     function testChangeTokenToUnverified() public {
@@ -73,9 +69,6 @@ contract StatusNFTIntegrationTest is Test, StatusConstants {
             )
         );
 
-        assertEq(
-            keccak256(abi.encodePacked(uri)),
-            keccak256(abi.encodePacked(abi.encodePacked(expectedMetadata)))
-        );
+        assertEq(keccak256(abi.encodePacked(uri)), keccak256(abi.encodePacked(abi.encodePacked(expectedMetadata))));
     }
 }

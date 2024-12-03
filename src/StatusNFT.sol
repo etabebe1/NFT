@@ -19,10 +19,7 @@ contract StatusNFT is ERC721 {
 
     mapping(uint256 => Status) public s_tokenIdToStatus;
 
-    constructor(
-        string memory _unverified,
-        string memory _verified
-    ) ERC721("User Status", "US") {
+    constructor(string memory _unverified, string memory _verified) ERC721("User Status", "US") {
         s_tokenCounter = 0;
         s_unverified = _unverified;
         s_verified = _verified;
@@ -38,9 +35,7 @@ contract StatusNFT is ERC721 {
         return "data:application/json;base64,";
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         string memory imageURI;
 
         if (s_tokenIdToStatus[tokenId] == Status.unverified) {

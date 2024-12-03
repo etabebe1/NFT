@@ -14,23 +14,16 @@ contract DeployStatusNFT is Script, StatusConstants {
         string memory verified_svg = vm.readFile("./images/verified.svg");
 
         vm.startBroadcast();
-        statusNFT = new StatusNFT(
-            svgToBase64URI(unverified_svg),
-            svgToBase64URI(verified_svg)
-        );
+        statusNFT = new StatusNFT(svgToBase64URI(unverified_svg), svgToBase64URI(verified_svg));
         vm.stopBroadcast();
 
         return statusNFT;
     }
 
-    function svgToBase64URI(
-        string memory svg
-    ) public pure returns (string memory) {
+    function svgToBase64URI(string memory svg) public pure returns (string memory) {
         string memory prefix = "data:image/svg+xml;base64,";
         string memory encodedBase64svg = Base64.encode(bytes(svg));
-        string memory base64Output = string(
-            abi.encodePacked(prefix, encodedBase64svg)
-        );
+        string memory base64Output = string(abi.encodePacked(prefix, encodedBase64svg));
 
         // console.log(base64Output);
 

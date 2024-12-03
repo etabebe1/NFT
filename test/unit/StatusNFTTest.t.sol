@@ -41,10 +41,6 @@ contract StatusNFTTest is Test, StatusConstants {
         );
 
         // Assert that the tokenURI matches the expected metadata
-        assertEq(
-            uri,
-            expectedMetadata,
-            "Token URI does not match expected metadata."
-        );
+        assertEq(uri, expectedMetadata, "Token URI does not match expected metadata.");
     }
 }

@@ -17,16 +17,11 @@ contract DeployStatusNFTTest is StatusConstants, HardCodedSvg {
          * @dev possible to use VERIFIED_SVG too
          */
         string memory expectedURI = UNVERIFIED_SVG;
-        string memory actualURI = deployStatusNFT.svgToBase64URI(
-            HARDCODED_UNVERIFIED_SVG
-        );
+        string memory actualURI = deployStatusNFT.svgToBase64URI(HARDCODED_UNVERIFIED_SVG);
 
         // console.log(expectedURI);
         // console.log(actualURI);
 
-        assert(
-            (keccak256(abi.encodePacked(actualURI)) ==
-                keccak256(abi.encodePacked(expectedURI)))
-        );
+        assert((keccak256(abi.encodePacked(actualURI)) == keccak256(abi.encodePacked(expectedURI))));
     }
 }
