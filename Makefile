@@ -1,63 +1,117 @@
 -include .env
 
-.PHONY: all test clean deploy fund help install snapshot format anvil zktest
+.PHONY: all test clean deploy fund help install snapshot format anvil zktest deploy-local deploy-sepolia mint-local mint-sepolia status-local status-sepolia
 
 DEFAULT_ANVIL_KEY := 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-DEFAULT_ZKSYNC_LOCAL_KEY := 0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110
 
-all: clean remove install update build
+# Clean the repository
+clean: 
+	@forge clean
 
-# Clean the repo
-clean  :; forge clean
+# Remove installed modules
+remove:
+	@rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules && git add . && git commit -m "Remove modules"
 
-# Remove modules
-remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules && git add . && git commit -m "modules"
+# Install dependencies
+install:
+	@forge install cyfrin/foundry-devops --no-commit
+	@forge install foundry-rs/forge-std@v1.8.2 --no-commit
+	@forge install openzeppelin/openzeppelin-contracts@v5.0.2 --no-commit
 
-install :; forge install cyfrin/foundry-devops --no-commit && forge install foundry-rs/forge-std@v1.8.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.2 --no-commit
+# Update dependencies
+update:
+	@forge update
 
-# Update Dependencies
-update:; forge update
+# Build contracts
+build:
+	@forge build
 
-build:; forge build
+# Test contracts
+test:
+	@forge test
 
-test :; forge test 
+# ZkSync-specific tests
+zktest:
+	@foundryup-zksync && forge test --zksync && foundryup
 
-zktest :; foundryup-zksync && forge test --zksync && foundryup
+# Format Solidity code
+format:
+	@forge fmt
 
-snapshot :; forge snapshot
+# Start Anvil local blockchain
+anvil:
+	@anvil -m 'test test test test test test test test test test test junk' --steps-tracing --block-time 1
 
-format :; forge fmt
+# Set up local and Sepolia-specific network arguments
+LOCAL_NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast
+SEPOLIA_NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
-anvil :; anvil -m 'test test test test test test test test test test test junk' --steps-tracing --block-time 1
+# Deploy contracts
+deploy-local:
+	@forge script script/DeployStatusNFT.s.sol:DeployStatusNFT $(LOCAL_NETWORK_ARGS)
 
-NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast
+deploy-sepolia:
+	@forge script script/DeployStatusNFT.s.sol:DeployStatusNFT $(SEPOLIA_NETWORK_ARGS)
 
-ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
-	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
-endif
+# Mint NFTs
+mint-local:
+	@forge script script/Interactions.s.sol:MintBasicNFT $(LOCAL_NETWORK_ARGS)
 
+mint-sepolia:
+	@forge script script/Interactions.s.sol:MintBasicNFT $(SEPOLIA_NETWORK_ARGS)
+
+# Change status of NFTs
+status-local:
+	@forge script script/Interactions.s.sol:FlipMoodNft $(LOCAL_NETWORK_ARGS)
+
+status-sepolia:
+	@forge script script/Interactions.s.sol:FlipMoodNft $(SEPOLIA_NETWORK_ARGS)
+
+# Deploy and interact workflow
 deploy:
-	@forge script script/DeployBasicNFT.s.sol:DeployBasicNFT $(NETWORK_ARGS)
+ifeq ($(ARGS),--network sepolia)
+	@forge script script/DeployBasicNFT.s.sol:DeployBasicNFT $(SEPOLIA_NETWORK_ARGS)
+else
+	@forge script script/DeployBasicNFT.s.sol:DeployBasicNFT $(LOCAL_NETWORK_ARGS)
+endif
 
 mint:
-NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast
-
-ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
-	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+ifeq ($(ARGS),--network sepolia)
+	@forge script script/Interactions.s.sol:MintBasicNFT $(SEPOLIA_NETWORK_ARGS)
+else
+	@forge script script/Interactions.s.sol:MintBasicNFT $(LOCAL_NETWORK_ARGS)
 endif
 
-deploy:
-	@forge script script/DeployBasicNFT.s.sol:DeployBasicNFT $(NETWORK_ARGS)
-	@forge script script/Interactions.s.sol:MintBasicNft ${NETWORK_ARGS}
+change-status:
+ifeq ($(ARGS),--network sepolia)
+	@forge script script/Interactions.s.sol:FlipMoodNft $(SEPOLIA_NETWORK_ARGS)
+else
+	@forge script script/Interactions.s.sol:FlipMoodNft $(LOCAL_NETWORK_ARGS)
+endif
 
-# deployMood:
-# 	@forge script script/D.s.sol:DeployMoodNft $(NETWORK_ARGS)
+# Snapshot
+snapshot:
+	@forge snapshot
 
-mintStatusNft:
-	@forge script script/Interactions.s.sol:MintBasicNFT $(NETWORK_ARGS)
-
-# flipMoodNft:
-# 	@forge script script/Interactions.s.sol:FlipMoodNft $(NETWORK_ARGS)
-
-# zkdeploy: 
-# 	@forge create src/OurToken.sol:OurToken --rpc-url http://127.0.0.1:8011 --private-key $(DEFAULT_ZKSYNC_LOCAL_KEY) --legacy --zksync
+# Help menu
+help:
+	@echo "Available targets:"
+	@echo "  clean          - Clean the repository"
+	@echo "  remove         - Remove installed modules"
+	@echo "  install        - Install dependencies"
+	@echo "  update         - Update dependencies"
+	@echo "  build          - Build contracts"
+	@echo "  test           - Run tests"
+	@echo "  zktest         - Run zkSync-specific tests"
+	@echo "  format         - Format Solidity code"
+	@echo "  anvil          - Start Anvil local blockchain"
+	@echo "  deploy-local   - Deploy contracts to local Anvil chain"
+	@echo "  deploy-sepolia - Deploy contracts to Sepolia"
+	@echo "  mint-local     - Mint NFT on local Anvil chain"
+	@echo "  mint-sepolia   - Mint NFT on Sepolia"
+	@echo "  status-local   - Flip NFT status on local Anvil chain"
+	@echo "  status-sepolia - Flip NFT status on Sepolia"
+	@echo "  deploy         - Deploy contracts (default to local unless --network sepolia is specified)"
+	@echo "  mint           - Mint NFT (default to local unless --network sepolia is specified)"
+	@echo "  change-status  - Change NFT status (default to local unless --network sepolia is specified)"
+	@echo "  snapshot       - Run snapshot"
