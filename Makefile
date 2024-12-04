@@ -59,13 +59,20 @@ mint-local:
 
 mint-sepolia:
 	@forge script script/Interactions.s.sol:MintBasicNFT $(SEPOLIA_NETWORK_ARGS)
+# Using cast
+cast send 0x5FbDB2315678afecb367f032d93F642f64180aa3 "mintNFT()" --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
 
 # Change status of NFTs
+
 status-local:
-	@forge script script/Interactions.s.sol:FlipMoodNft $(LOCAL_NETWORK_ARGS)
+	@forge script script/Interactions.s.sol:changeStatusNFT $(LOCAL_NETWORK_ARGS)
 
 status-sepolia:
-	@forge script script/Interactions.s.sol:FlipMoodNft $(SEPOLIA_NETWORK_ARGS)
+	@forge script script/Interactions.s.sol:changeStatusNFT $(SEPOLIA_NETWORK_ARGS)
+# Using cast
+cast send 0x5FbDB2315678afecb367f032d93F642f64180aa3 "changeState(uint256)" 0 --private-key 0xac0974bec39a17e36ba4a6
+b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
 # Deploy and interact workflow
 deploy:
@@ -84,9 +91,9 @@ endif
 
 change-status:
 ifeq ($(ARGS),--network sepolia)
-	@forge script script/Interactions.s.sol:FlipMoodNft $(SEPOLIA_NETWORK_ARGS)
+	@forge script script/Interactions.s.sol:changeStatusNFT $(SEPOLIA_NETWORK_ARGS)
 else
-	@forge script script/Interactions.s.sol:FlipMoodNft $(LOCAL_NETWORK_ARGS)
+	@forge script script/Interactions.s.sol:changeStatusNFT $(LOCAL_NETWORK_ARGS)
 endif
 
 # Snapshot

@@ -1,0 +1,7 @@
+BasicNFTTest:testMintNFT() (gas: 159886)
+BasicNFTTest:testNFTName() (gas: 8980)
+BasicNFTTest:testTokenCounterInitially() (gas: 7635)
+DeployStatusNFTTest:testSvgToBase64URI() (gas: 114364)
+StatusNFTIntegrationTest:testChangeTokenToUnverified() (gas: 784256)
+StatusNFTIntegrationTest:testTokenURIIntegration() (gas: 544339)
+StatusNFTTest:testTokenURI() (gas: 544295)
